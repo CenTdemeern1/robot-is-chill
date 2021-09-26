@@ -362,7 +362,18 @@ class Renderer:
             if tile.negative:
                 inverted = 255-np.array(sprite)
                 inverted[:,:,3] = 255-inverted[:,:,3]
+                #Optimize a bit by not constantly converting between image and array, and thus performing exclude before returning
+                if tile.exclude!=None:
+                    red, green, blue, alpha = inverted.T
+                    matching = (red == tile.exclude[0]) & (blue == tile.exclude[1]) & (green == tile.exclude[2])
+                    inverted[..., :][matching.T] = (0, 0, 0, 0)
                 sprite = Image.fromarray(abs(inverted))
+            elif tile.exclude!=None:
+                excludesprite = np.array(sprite)
+                red, green, blue, alpha = excludesprite.T
+                matching = (red == tile.exclude[0]) & (blue == tile.exclude[1]) & (green == tile.exclude[2])
+                excludesprite[..., :][matching.T] = (0, 0, 0, 0)
+                sprite = Image.fromarray(excludesprite)
             out.append(sprite)
         f0, f1, f2 = out
         return ReadyTile((f0, f1, f2), tile.cut_alpha, tile.mask_alpha, tile.displace, tile.scale)

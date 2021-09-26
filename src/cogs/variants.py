@@ -852,5 +852,19 @@ def setup(bot: Bot):
         return{
             "palette": ctx.groups[0]
         }
+
+    @handlers.handler(
+        pattern=r"exclude#([0-9a-fA-F]{1,6})",
+        variant_hints={"exclude": "`exclude#<hexcolor>` (Excludes a hex color from the tile.)"},
+        variant_group="Filters"
+    )
+    def exclude(ctx: HandlerContext) -> TileFields:
+        color = int(ctx.groups[0], base=16)
+        red = color >> 16
+        green = (color & 0x00ff00) >> 8
+        blue = color & 0x0000ff
+        return{
+            "exclude": (red,green,blue)
+        }
         
     return handlers

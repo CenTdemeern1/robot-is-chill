@@ -63,6 +63,7 @@ class TileFields(TypedDict, total=False):
     freeze: bool
     negative: bool
     palette: str
+    exclude: tuple[int, int, int, int]
 
 @dataclass
 class FullTile:
@@ -93,6 +94,7 @@ class FullTile:
     freeze: bool = False
     negative: bool = False
     palette: str = ""
+    exclude: tuple[int, int, int] | None = None
     
     @classmethod
     def from_tile_fields(cls, tile: RawTile, fields: TileFields) -> FullTile:
